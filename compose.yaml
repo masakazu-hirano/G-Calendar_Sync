@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  Backend:
+    platform: linux/x86_64
+    container_name: G-Calendar_Sync
+    image: g-cal_sync:3.11.5
+    build:
+      context: ./Backend
+    volumes:
+      - ./Backend:/usr/local/src:delegated
+    networks:
+      G-Calendar_Sync:
+        ipv4_address: 192.168.0.10
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 2gb
+        reservations:
+          cpus: '1.0'
+          memory: 1gb
+    tty: true
+
+networks:
+  G-Calendar_Sync:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: '192.168.0.0/24'
