@@ -1,18 +1,14 @@
-import google.auth
 import calendar
 import json
 import logging
 import os
 import pytz
 import requests
-import googleapiclient.discovery
 
 from datetime import datetime
 from dotenv import load_dotenv
 from googleapiclient import discovery
 from google.oauth2.service_account import Credentials
-
-from Components.Notion_API import SET_Header, SET_Search_Condition
 
 class Notion_DB_Record:
 	def __init__(self, id, title, location, start_date, end_date, url):
@@ -48,35 +44,6 @@ def Current_Datetime(condition: str = 'current') -> datetime:
 	else:
 		logging.error(msg = "以下、いずれかの値を指定してください。\n→ 現在時刻: 'current', 月初: 'begin', 月末: 'end'")
 		exit()
-
-# 現在 Google カレンダーに登録されている予定の ID, ETag を取得
-# def GET_Schedule_List(google_client) -> list:
-# 	page_token = None
-# 	results = []
-# 	while True:
-# 		schedule_list = google_client.events().list(
-# 			calendarId = '6f03f4dba68734aab6ee5c2dbd6244603ac19064a23d11025370af7628514507@group.calendar.google.com',
-# 			timeMin = Current_Datetime('begin').isoformat(),
-# 			orderBy = 'startTime',
-# 			timeZone = 'Asia/Tokyo',
-# 			maxResults = 2500,
-# 			singleEvents = True,
-# 			pageToken = page_token
-# 		).execute()
-
-# 		if len(schedule_list['items']) == 0:
-# 			logging.error(msg = '取得件数が 0件です。')
-# 		else:
-# 			for schedule in schedule_list['items']:
-# 				results.append({
-# 					'ID': schedule['id'],
-# 					'ETag': schedule['etag']
-# 				})
-
-# 			try:
-# 				page_token = schedule_list['nextPageToken']
-# 			except KeyError:
-# 				return results
 
 # Notion API を実行する際の条件
 def SET_Notion_Condition(value, start_cursor = None) -> str:
@@ -269,7 +236,5 @@ if __name__ == '__main__':
 		Regist_Google_Calendar(google_client, record)
 		logging.info(msg = f"進捗状況: {count}/{len(records)}\n新規登録 完了: {record.title}")
 		count += 1
-
-
 
 	logging.info(msg = '処理が正常に終了しました。')
