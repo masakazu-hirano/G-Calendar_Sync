@@ -1,11 +1,11 @@
-FROM python:3.11.5-slim-bookworm
+FROM python:3.12.0-slim-bookworm
 
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 RUN apt-get update \
-	&& apt-get install --yes --show-progress --verbose-versions cron vim git
+	&& apt-get install --yes --show-progress --verbose-versions apt-show-versions gcc systemctl cron vim git
 
-RUN git config --global user.name mskzu-hirno \
+RUN git config --global user.name masakazu-hirano \
 	&& git config --global user.email @users.noreply.github.com \
 	&& git config --global init.defaultBranch main
 
