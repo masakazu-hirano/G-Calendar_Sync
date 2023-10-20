@@ -4,7 +4,7 @@ services:
   Backend:
     platform: linux/x86_64
     container_name: G-Calendar_Sync
-    image: g-cal_sync:3.11.5
+    image: g-cal_sync:3.12.0
     build:
       context: ./Backend
     volumes:
