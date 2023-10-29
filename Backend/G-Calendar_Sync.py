@@ -19,6 +19,9 @@ if __name__ == '__main__':
 		style = '{'
 	)
 
+	time_zone = pytz.timezone(zone = 'Asia/Tokyo')
+	current_datetime: datetime = datetime.now().astimezone(tz = time_zone).replace(microsecond = 0)
+
 	with open(
 		file = '/usr/local/src/Google-Cloud_Secrets.json',
 		mode = 'r',
@@ -39,7 +42,6 @@ if __name__ == '__main__':
 			num_retries = 3
 		)
 
-	current_datetime: datetime = datetime.now().astimezone(tz = pytz.timezone(zone = 'Asia/Tokyo'))
 	regist_count = Calendar_Regist(google_client, current_datetime)
 	requests.post(
 		url = 'https://api.line.me/v2/bot/message/push',
