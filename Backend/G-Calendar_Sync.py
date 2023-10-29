@@ -22,6 +22,13 @@ if __name__ == '__main__':
 	time_zone = pytz.timezone(zone = 'Asia/Tokyo')
 	current_datetime: datetime = datetime.now().astimezone(tz = time_zone).replace(microsecond = 0)
 
+	notion_request_header: dict[str, str] = {
+		'content-type': 'application/json',
+		'accept': 'application/json',
+		'Authorization': f"Bearer {os.getenv(key = 'NOTION_SECRET_KEY')}",
+		'Notion-Version': '2022-06-28'
+	}
+
 	with open(
 		file = '/usr/local/src/Google-Cloud_Secrets.json',
 		mode = 'r',
