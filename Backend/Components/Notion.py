@@ -19,36 +19,67 @@ def SET_Header() -> str:
 		skipkeys = False
 	)
 
-def SET_Conditions(current_datetime: datetime, start_cursor: str = None) -> str:
-	conditions: dict = {
-		'page_size': 100,
-		'sorts': [
-			{'property': '日時', 'direction': 'ascending'},
-			{'property': 'タイトル', 'direction': 'ascending'},
-		],
+def SET_Conditions(current_datetime: datetime, condition: str = 'Create', start_cursor: str = None) -> str:
+	if condition == 'Create':
+		conditions: dict = {
+			'page_size': 100,
+			'sorts': [
+				{'property': '日時', 'direction': 'ascending'},
+				{'property': 'タイトル', 'direction': 'ascending'},
+			],
 
-		'filter': {
-			'and': [
-				{
-					'property': 'Category',
-					'multi_select': {'contains': 'Calendar（スケジュール管理）'}
-				},
-				{
-					'property': '日時',
-					'date': {'after': current_datetime.replace(
-						day = 1,
-						hour = 0,
-						minute = 0,
-						second = 0
-					).isoformat()}
-				},
-				{
-					'property': 'Google カレンダー（ID）',
-					'rich_text': {'is_empty': True}
-				}
-			]
+			'filter': {
+				'and': [
+					{
+						'property': 'Category',
+						'multi_select': {'contains': 'Calendar（スケジュール管理）'}
+					},
+					{
+						'property': '日時',
+						'date': {'after': current_datetime.replace(
+							day = 1,
+							hour = 0,
+							minute = 0,
+							second = 0
+						).isoformat()}
+					},
+					{
+						'property': 'Google カレンダー（ID）',
+						'rich_text': {'is_empty': True}
+					}
+				]
+			}
 		}
-	}
+	elif condition == 'Update':
+		previous_datetime: datetime = current_datetime - timedelta(days = 3)
+		conditions: dict = {
+			'page_size': 100,
+			'sorts': [
+				{'property': '日時', 'direction': 'ascending'},
+				{'property': 'タイトル', 'direction': 'ascending'},
+			],
+
+			'filter': {
+				'and': [
+					{
+						'property': 'Category',
+						'multi_select': {'contains': 'Calendar（スケジュール管理）'}
+					},
+					{
+						'property': 'Google カレンダー（ID）',
+						'rich_text': {'is_not_empty': True}
+					},
+					{
+						'timestamp': 'last_edited_time',
+						'last_edited_time': {'after': previous_datetime.replace(
+							hour = 0,
+							minute = 0,
+							second = 0
+						).isoformat()}
+					}
+				]
+			}
+		}
 
 	if start_cursor != None:
 		conditions['start_cursor'] = start_cursor
