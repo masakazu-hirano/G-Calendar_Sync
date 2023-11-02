@@ -48,6 +48,38 @@ def Create_Events(current_datetime: datetime):
 	return None
 
 def Update_Events():
+	notion_url: str = f"https://api.notion.com/v1/databases/{os.getenv(key = 'NOTION_DB_ID')}/query"
+
+	loop_count: int = 0
+	has_more: bool = True
+	while has_more:
+		if loop_count == 0:
+			response: Response = post(
+				url = notion_url,
+				headers = json.loads(s = Notion_Request_Header()),
+				json = json.loads(s = SET_Conditions(current_datetime, 'Update')),
+			)
+		elif loop_count > 0:
+			response: Response = post(
+				url = notion_url,
+				headers = json.loads(s = Notion_Request_Header()),
+				json = json.loads(s = SET_Conditions(current_datetime, 'Update', start_cursor)),
+			)
+
+		if response.status_code == 200:
+			notion_records = json.loads(s = response.text)
+			for record in notion_records['results']:
+				logging.info(msg = record)
+
+			if notion_records['has_more']:
+				start_cursor = notion_records['next_cursor']
+				loop_count += 1
+			else:
+				has_more = notion_records['has_more']
+		else:
+			logging.info(msg = json.loads(s = response.text))
+			has_more = False
+
 	return None
 
 if __name__ == '__main__':
